@@ -1,36 +1,24 @@
-Dns Encrypt
-===========
+# 关于xdns.py #
+xdns,py是针对DNS污染的一个解决方法的实现, 原理是**加密UDP查询**.  
 
-Encrypt dns query data before translation to avoid dns poisoning.
+# 什么是DNS污染? #
+DNS查询时UDP协议, 不像TCP有握手确认通信的能力. GFW先于DNS服务器返回一个伪造的包, 告诉查询者错误的IP指向!
 
-What does the script do ?
-=========================
 
-To avoid dns poisoning, I create a rep named [isayme/DnsByTcp](https://github.com/isayme/DnsByTcp "isayme/DnsByTcp"). It make a TCP connection to avoid dns poisoning.  
+# 解决方法汇总? #
 
-But for this project, I prefer to make a UDP socket, and for the some purpose there must be some other method.  
+下面列举写个人知道的防DNS污染方法. 
 
-The method I use is encrypting the DNS query. But, as normally known DNS servers donot realize my methon(in fact, I just return the complement of DNS query data), so to use the project, you have to run the script at local and a remote machine.
+## 使用TCP协议进行DNS查询 ##
+目前好像GFW还没有污染TCP查询(技术上好像不易实现).  
+但每个TCP查询都有三次握手, 关闭还要四次握手, 一个字: 慢!
+有兴趣可查看 [DnsByTcp](https://github.com/isayme/DnsByTcp) 的实现.
 
-How to use
-==========
+## 过滤伪造的包(这个可行是因为伪造包中错误的IP地址不是完全随机的) ##
+如果能知道伪造IP的可能列表, 感觉这个方法还是挺好的!  
+有兴趣可查看 [DNSFilter](https://github.com/isayme/DNSFilter) 的实现.
 
-For remote server(normally a vps server):
-------------------
-
-+ Open the python script for edit;
-+ Change The MACRO LOCAL_DNS_IP to your remote machine's IP;
-+ Change The MACRO REMOTE_DNS_IP to any famous dns server's IP;
-
-For local machine(normally your PC):
-------------------
-
-+ Open the python script for edit;
-+ Change The MACRO LOCAL_DNS_IP to '127.0.0.1';
-+ Change The MACRO REMOTE_DNS_IP to your remote server's IP(the above remote server);
-
-Question ?
-==========
-
-Any question ? Just mail to me !  
-Mail : isaymeorg [dot] gmail [dot] com
+## 加密UDP查询 ##
+加密DNS的请求包, GFW无法辨识请求包的内容就不会发出污染包!  
+不过,既然有加密就要有解密, 所以需要一个墙外的解密服务器!  
+另, 对于那些使用了CDN的网站来说, 这个真心不是好方法.  
