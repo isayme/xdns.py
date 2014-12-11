@@ -14,10 +14,8 @@ REMOTE_SERV_IP = '8.8.8.8'      # remote dns server ip
 
 def DNSQuery(dns_ip, dns_port, query_data):
     # simply encrypt socket data
-    qdata = ""
-    for i in range(len(query_data)):
-        qdata += chr(~ord(query_data[i]) % 256)
-                                                                                                                                                                        
+    qdata = query_data[::-1]
+    
     try:
         s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         # s.settimeout(TIMEOUT) # set socket timeout
